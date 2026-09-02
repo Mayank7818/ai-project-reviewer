@@ -1,0 +1,41 @@
+/**
+ * Global stylesheet and Tailwind entry point.
+ *
+ * Tailwind v4 is configured in CSS (no tailwind.config.js needed): this single
+ * import pulls in the engine, and the `@theme` block below defines design
+ * tokens that become real utilities - e.g. `--color-brand-500` gives you
+ * `bg-brand-500`, `text-brand-500`, `border-brand-500`.
+ */
+@import "tailwindcss";
+
+@theme {
+  --color-brand-50: #eef4ff;
+  --color-brand-100: #d9e5ff;
+  --color-brand-200: #bcd2ff;
+  --color-brand-300: #8eb4ff;
+  --color-brand-400: #598bfd;
+  --color-brand-500: #3563f5;
+  --color-brand-600: #2044ea;
+  --color-brand-700: #1a34d7;
+  --color-brand-800: #1c2eae;
+  --color-brand-900: #1c2d89;
+
+  --color-surface: #0b1020;
+  --color-surface-raised: #131a2f;
+}
+
+/* Small base-layer resets that Tailwind intentionally leaves to the app. */
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-surface text-slate-100 antialiased;
+  }
+
+  /* Keep keyboard focus clearly visible everywhere. */
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-brand-400;
+  }
+}

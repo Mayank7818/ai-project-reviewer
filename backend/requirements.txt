@@ -1,0 +1,16 @@
+# ==============================================================================
+# Runtime dependencies. This is what production installs.
+# Test-only tooling lives in requirements-dev.txt so a production image does not
+# ship a test runner or an HTTP mocking library.
+# ==============================================================================
+
+# --- Web framework -----------------------------------------------------------
+fastapi==0.121.2
+uvicorn[standard]==0.39.0
+
+# --- Configuration / validation ---------------------------------------------
+pydantic==2.12.4
+pydantic-settings==2.13.0
+
+# --- HTTP client (GitHub API, Ollama) ----------------------------------------
+httpx==0.28.1

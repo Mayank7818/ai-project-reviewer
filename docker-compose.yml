@@ -1,0 +1,86 @@
+# ==============================================================================
+# AI Project Reviewer - full stack, one command.
+#
+#   Browser ──▶ web (nginx: static SPA + /api proxy)
+#                 └──▶ api (FastAPI) ──▶ GitHub API      (public internet)
+#                                    └──▶ ollama         (private network)
+#
+# The browser only ever talks to `web`, so the API is same-origin and CORS never
+# enters into it. Only `web` publishes a port; the API and the model server are
+# reachable on the internal network alone.
+#
+#   cp backend/.env.example backend/.env      # edit if you want a GITHUB_TOKEN
+#   docker compose up -d --build
+#   docker compose exec ollama ollama pull gemma3:4b     # ~3.3 GB, once
+#   open http://localhost:8080
+#
+# REQUIREMENTS: the model is the expensive part. gemma3:4b needs roughly 5 GB of
+# free RAM, and one analysis is about five minutes on two CPU cores. A host with
+# less than 8 GB will swap or be killed by the OOM reaper.
+# ==============================================================================
+
+services:
+  ollama:
+    image: ollama/ollama:latest
+    restart: unless-stopped
+    volumes:
+      # Pulled models live here. Without this volume every restart re-downloads
+      # several gigabytes.
+      - ollama-models:/root/.ollama
+    # Deliberately not published: nothing outside this network should be able to
+    # reach an unauthenticated model server.
+    expose:
+      - "11434"
+    healthcheck:
+      test: ["CMD-SHELL", "ollama list >/dev/null 2>&1 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+  api:
+    build:
+      context: ./backend
+    restart: unless-stopped
+    # Every setting, including the optional GitHub token, comes from this file.
+    # It is gitignored and never copied into the image.
+    env_file:
+      - ./backend/.env
+    environment:
+      ENVIRONMENT: production
+      DEBUG: "false"
+      # Reached over the compose network, not localhost - inside a container
+      # localhost is the container itself.
+      OLLAMA_BASE_URL: http://ollama:11434
+      # The browser talks to `web`, so the API is same-origin and this list is
+      # unused in this topology. It is set anyway because the production guard
+      # requires a non-empty, non-wildcard value.
+      CORS_ORIGINS: http://localhost:8080
+    expose:
+      - "8000"
+    depends_on:
+      ollama:
+        condition: service_started
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://localhost:8000/api/v1/health', timeout=5).status==200 else 1)\""]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+  web:
+    build:
+      context: ./frontend
+      args:
+        # Relative on purpose: nginx proxies /api to the api service, so the
+        # browser makes same-origin requests and no host is baked into the bundle.
+        VITE_API_BASE_URL: /api
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    depends_on:
+      api:
+        condition: service_started
+
+volumes:
+  ollama-models:
