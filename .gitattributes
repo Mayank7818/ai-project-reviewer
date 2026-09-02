@@ -1,0 +1,33 @@
+# ==============================================================================
+# Line endings.
+#
+# This repository is developed on Windows and runs in Linux containers. Without
+# this file every checkout rewrites CRLF into the index, which shows up as a
+# whole-file diff the moment anyone on another platform touches it - and as ~90
+# "LF will be replaced by CRLF" warnings on every `git add` here.
+#
+# Text is normalised to LF in the repository. Git still checks it out with
+# native endings on Windows, so nothing about local editing changes.
+# ==============================================================================
+* text=auto eol=lf
+
+# Shell scripts and Docker entrypoints must be LF even on Windows checkouts, or
+# the container fails with "bad interpreter: no such file or directory".
+*.sh            text eol=lf
+Dockerfile      text eol=lf
+*.dockerfile    text eol=lf
+.env.example    text eol=lf
+
+# Binary: never diff, never normalise.
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.ico  binary
+*.pdf  binary
+*.woff  binary
+*.woff2 binary
+
+# Generated. Collapsed in diffs and excluded from language statistics, so the
+# repository is reported as the language it is written in.
+package-lock.json  -diff linguist-generated=true

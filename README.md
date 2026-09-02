@@ -1,5 +1,11 @@
 # AI Project Reviewer
 
+[![CI](https://github.com/Mayank7818/ai-project-reviewer/actions/workflows/ci.yml/badge.svg)](https://github.com/Mayank7818/ai-project-reviewer/actions/workflows/ci.yml)
+[![Tests](https://img.shields.io/badge/tests-682%20passing-brightgreen)](backend/tests)
+[![Python](https://img.shields.io/badge/python-3.12%20%7C%203.14-blue)](backend/requirements.txt)
+[![React](https://img.shields.io/badge/react-19-61dafb)](frontend/package.json)
+[![License](https://img.shields.io/badge/license-MIT-informational)](LICENSE)
+
 **Paste one of your GitHub repositories. Get a technical review of its real
 code, a match against a job posting, and an interview about what you actually
 built — with every claim checked against what the repository contains.**
@@ -8,11 +14,11 @@ Everything runs on your own machine against a local Ollama model. No paid API,
 no cloud AI provider, and nothing about your code or the job posting leaves the
 host.
 
-> **Status: steps 1–10 complete.** Retrieval, analysis, interviews, job
-> matching, smart retrieval, context compression, production polish and
-> production configuration are built and verified. Container definitions exist
-> but have not been run — see [Deployment](#deployment). Not yet deployed to a
-> host.
+> **Status: built and verified locally; not deployed.** Retrieval, analysis,
+> interviews, job matching, smart retrieval, context compression, production
+> polish and production configuration are complete, with 682 offline tests.
+> Container definitions exist but have not been run — see
+> [Deployment](#deployment).
 
 ---
 

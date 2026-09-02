@@ -1,0 +1,20 @@
+# Shared editor settings, so formatting does not depend on who opened the file.
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+
+[*.py]
+indent_size = 4
+max_line_length = 88
+
+[*.{js,jsx,json,css,html,yml,yaml}]
+indent_size = 2
+
+[*.md]
+# Trailing spaces are a line break in Markdown.
+trim_trailing_whitespace = false
